@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #0f3460;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar h1 {
+            color: #00ff88;
+            font-size: 24px;
+        }
+
+        .navbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar .user-name {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .navbar .role-badge {
+            background: #00ff88;
+            color: #1a1a2e;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            background: #ff3232;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h2 {
+            color: #ffffff;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            color: #b8b8b8;
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: #0f3460;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #b8b8b8;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .stat-card .stat-value {
+            color: #00ff88;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: #0f3460;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            color: #ffffff;
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            background: #00ff88;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #00cc6e;
+            transform: translateY(-2px);
+        }
+
+        .prescription-list, .reminder-list {
+            list-style: none;
+        }
+
+        .prescription-item, .reminder-item {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .prescription-item h4, .reminder-item h4 {
+            color: #ffffff;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .prescription-item p, .reminder-item p {
+            color: #b8b8b8;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .status-approved {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .status-pending {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+
+        .status-dispensed {
+            background: rgba(74, 158, 255, 0.2);
+            color: #4a9eff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #b8b8b8;
+        }
+
+        .empty-state img {
+            width: 100px;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🏥 Healthcare System</h1>
+        <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <span class="role-badge">PATIENT</span>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h2>Patient Dashboard</h2>
+            <p>Manage your prescriptions and health reminders</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Active Prescriptions</h3>
+                <div class="stat-value" id="activePrescriptions">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Upcoming Reminders</h3>
+                <div class="stat-value" id="upcomingReminders">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Appointments</h3>
+                <div class="stat-value" id="totalAppointments">0</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h3>
+                    My Prescriptions
+                    <button class="btn" onclick="showNewPrescriptionForm()">+ Request</button>
+                </h3>
+                <ul class="prescription-list" id="prescriptionList">
+                    <li class="empty-state">
+                        <p>No prescriptions found</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>
+                    Reminders
+                    <button class="btn" onclick="showNewReminderForm()">+ Add</button>
+                </h3>
+                <ul class="reminder-list" id="reminderList">
+                    <li class="empty-state">
+                        <p>No reminders set</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080/api';
+        let token = localStorage.getItem('token');
+
+        // Check authentication
+        if (!token) {
+            window.location.href = 'index.html';
+        }
+
+        // Load user profile
+        async function loadUserProfile() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('userName').textContent = user.fullName;
+                } else {
+                    throw new Error('Failed to load profile');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Load prescriptions (mock data - replace with actual API call)
+        async function loadPrescriptions() {
+            // Mock data - replace with actual API call
+            const mockPrescriptions = [
+                {
+                    id: 1,
+                    medicationName: 'Amoxicillin 500mg',
+                    doctorName: 'Dr. Smith',
+                    dosage: '1 tablet',
+                    frequency: 'Twice daily',
+                    status: 'APPROVED'
+                },
+                {
+                    id: 2,
+                    medicationName: 'Ibuprofen 400mg',
+                    doctorName: 'Dr. Johnson',
+                    dosage: '1 tablet',
+                    frequency: 'As needed',
+                    status: 'DISPENSED'
+                }
+            ];
+
+            const prescriptionList = document.getElementById('prescriptionList');
+            
+            if (mockPrescriptions.length === 0) {
+                prescriptionList.innerHTML = '<li class="empty-state"><p>No prescriptions found</p></li>';
+                return;
+            }
+
+            prescriptionList.innerHTML = mockPrescriptions.map(p => `
+                <li class="prescription-item">
+                    <h4>${p.medicationName}</h4>
+                    <p><strong>Doctor:</strong> ${p.doctorName}</p>
+                    <p><strong>Dosage:</strong> ${p.dosage} - ${p.frequency}</p>
+                    <span class="status status-${p.status.toLowerCase()}">${p.status}</span>
+                </li>
+            `).join('');
+
+            document.getElementById('activePrescriptions').textContent = mockPrescriptions.length;
+        }
+
+        // Load reminders (mock data - replace with actual API call)
+        async function loadReminders() {
+            // Mock data
+            const mockReminders = [
+                {
+                    id: 1,
+                    title: 'Take Amoxicillin',
+                    time: '08:00 AM',
+                    description: 'Morning dose'
+                },
+                {
+                    id: 2,
+                    title: 'Doctor Appointment',
+                    time: '02:00 PM',
+                    description: 'Follow-up with Dr. Smith'
+                }
+            ];
+
+            const reminderList = document.getElementById('reminderList');
+            
+            if (mockReminders.length === 0) {
+                reminderList.innerHTML = '<li class="empty-state"><p>No reminders set</p></li>';
+                return;
+            }
+
+            reminderList.innerHTML = mockReminders.map(r => `
+                <li class="reminder-item">
+                    <h4>${r.title}</h4>
+                    <p><strong>Time:</strong> ${r.time}</p>
+                    <p>${r.description}</p>
+                </li>
+            `).join('');
+
+            document.getElementById('upcomingReminders').textContent = mockReminders.length;
+        }
+
+        // Mock functions for buttons
+        function showNewPrescriptionForm() {
+            alert('Request new prescription form will be implemented here');
+        }
+
+        function showNewReminderForm() {
+            alert('Add new reminder form will be implemented here');
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('email');
+            localStorage.removeItem('fullName');
+            window.location.href = 'index.html';
+        }
+
+        // Initialize dashboard
+        window.onload = function() {
+            loadUserProfile();
+            loadPrescriptions();
+            loadReminders();
+            document.getElementById('totalAppointments').textContent = '3';
+        };
+    </script>
+</body>
+</html>

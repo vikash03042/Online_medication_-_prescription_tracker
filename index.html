@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Management System - Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="formTitle">Login</h1>
+            <p>Healthcare Management System</p>
+        </div>
+
+        <div id="errorAlert" class="alert alert-error"></div>
+        <div id="successAlert" class="alert alert-success"></div>
+
+        <div id="authForm">
+            <!-- Full Name (only for signup) -->
+            <div class="form-group hidden" id="fullNameGroup">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name">
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role">
+                    <option value="PATIENT">Patient</option>
+                    <option value="DOCTOR">Doctor</option>
+                    <option value="PHARMACIST">Pharmacist</option>
+                    <option value="ADMIN">Admin</option>
+                </select>
+            </div>
+
+            <!-- Doctor Fields -->
+            <div id="doctorFields" class="hidden">
+                <div class="form-group">
+                    <label for="medicalLicenseNumber">Medical License Number</label>
+                    <input type="text" id="medicalLicenseNumber" placeholder="Enter license number">
+                </div>
+                <div class="form-group">
+                    <label for="specialization">Specialization</label>
+                    <input type="text" id="specialization" placeholder="e.g., Cardiology">
+                </div>
+            </div>
+
+            <!-- Pharmacist Fields -->
+            <div id="pharmacistFields" class="hidden">
+                <div class="form-group">
+                    <label for="shopName">Shop Name</label>
+                    <input type="text" id="shopName" placeholder="Enter shop name">
+                </div>
+                <div class="form-group">
+                    <label for="licenseNumber">License Number</label>
+                    <input type="text" id="licenseNumber" placeholder="Enter license number">
+                </div>
+                <div class="form-group">
+                    <label for="shopAddress">Shop Address</label>
+                    <input type="text" id="shopAddress" placeholder="Enter shop address">
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button class="btn btn-primary" id="submitBtn" onclick="handleSubmit()">Login</button>
+        </div>
+
+        <div class="toggle-form">
+            <button id="toggleBtn" onclick="toggleForm()">Don't have an account? Sign up</button>
+        </div>
+
+        <div class="role-info">
+            <h3>Role Descriptions:</h3>
+            <div class="role-item">
+                <span class="role-name role-patient">Patient:</span>
+                <span class="role-desc">Manage prescriptions and reminders</span>
+            </div>
+            <div class="role-item">
+                <span class="role-name role-doctor">Doctor:</span>
+                <span class="role-desc">Approve and issue prescriptions</span>
+            </div>
+            <div class="role-item">
+                <span class="role-name role-pharmacist">Pharmacist:</span>
+                <span class="role-desc">Handle stock management</span>
+            </div>
+            <div class="role-item">
+                <span class="role-name role-admin">Admin:</span>
+                <span class="role-desc">Oversee all roles</span>
+            </div>
+        </div>
+    </div>
+       
+    <script src="script.js"></script>
+</body>
+</html>
